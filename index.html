@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NVIDIA 주식 분석 & GitHub 트렌딩</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <style>
     :root {
       --bg: #0a0a0f;
@@ -18,16 +17,13 @@
       --accent2: #5ce1e6;
       --tag-bg: #7c5cfc22;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
     }
-
     .container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem; }
 
     /* Nav */
@@ -39,15 +35,8 @@
       padding-bottom: 1rem;
       border-bottom: 1px solid var(--border);
     }
-
-    .nav-brand {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
+    .nav-brand { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
     .nav-tabs { display: flex; gap: 0; }
-
     .nav-tab {
       padding: 0.6rem 1.5rem;
       cursor: pointer;
@@ -60,10 +49,8 @@
       background: none;
       transition: all 0.2s;
     }
-
     .nav-tab:hover { color: var(--text); }
     .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--tag-bg); }
-
     .settings-btn {
       padding: 0.5rem 1rem;
       border-radius: 6px;
@@ -74,10 +61,8 @@
       font-size: 0.85rem;
       transition: all 0.2s;
     }
-
     .settings-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* Panels */
     .panel { display: none; }
     .panel.active { display: block; }
 
@@ -90,9 +75,7 @@
       align-items: center;
       justify-content: center;
     }
-
     .modal-overlay.show { display: flex; }
-
     .modal {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -101,18 +84,9 @@
       width: 90%;
       max-width: 500px;
     }
-
     .modal h2 { margin-bottom: 1.5rem; font-size: 1.2rem; }
-
     .form-group { margin-bottom: 1.2rem; }
-
-    .form-group label {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 0.4rem;
-    }
-
+    .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem; }
     .form-group input {
       width: 100%;
       padding: 0.6rem 0.8rem;
@@ -122,12 +96,9 @@
       color: var(--text);
       font-size: 0.9rem;
     }
-
     .form-group input:focus { outline: none; border-color: var(--accent); }
-
     .form-group small { color: var(--text-muted); font-size: 0.75rem; margin-top: 0.3rem; display: block; }
     .form-group small a { color: var(--accent); text-decoration: none; }
-
     .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem; }
 
     .btn {
@@ -139,102 +110,66 @@
       font-weight: 600;
       transition: all 0.2s;
     }
-
     .btn-primary { background: var(--accent); color: white; }
     .btn-primary:hover { opacity: 0.9; }
     .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
     .btn-ghost:hover { border-color: var(--text-muted); }
 
-    /* ==================== STOCK PANEL ==================== */
-    .stock-header {
-      display: flex;
-      align-items: flex-end;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
+    /* ===== STOCK ===== */
+    .stock-section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 1.5rem 0 1rem;
+      color: var(--accent2);
     }
-
-    .stock-price { font-size: 2.5rem; font-weight: 700; }
-    .stock-change { font-size: 1.1rem; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
-    .stock-change.up { color: var(--green); background: #00d26a18; }
-    .stock-change.down { color: var(--red); background: #ff475718; }
-
-    .stock-name { color: var(--text-muted); font-size: 0.95rem; }
-
-    .period-tabs {
-      display: flex;
-      gap: 0.25rem;
-      margin-bottom: 1rem;
-      background: var(--card-bg);
-      border-radius: 8px;
-      padding: 4px;
-      width: fit-content;
-    }
-
-    .period-tab {
-      padding: 0.4rem 1rem;
-      border-radius: 6px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-      transition: all 0.15s;
-    }
-
-    .period-tab.active { background: var(--accent); color: white; }
-
-    .chart-container {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
+    .tradingview-container {
       border-radius: 12px;
-      padding: 1.5rem;
+      overflow: hidden;
+      border: 1px solid var(--border);
       margin-bottom: 1.5rem;
-      position: relative;
     }
-
-    .chart-container canvas { width: 100% !important; }
-
-    /* Analysis Cards */
     .analysis-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1rem;
-      margin-top: 1.5rem;
     }
-
     .analysis-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 1.2rem;
     }
-
     .analysis-card h3 {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-
-    .analysis-value { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
-    .analysis-sub { font-size: 0.85rem; color: var(--text-muted); }
-
+    .analysis-value { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .analysis-sub { font-size: 0.82rem; color: var(--text-muted); }
     .trend-indicator {
       display: inline-block;
       padding: 3px 10px;
       border-radius: 4px;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
     }
-
     .trend-up { background: #00d26a22; color: var(--green); }
     .trend-down { background: #ff475722; color: var(--red); }
     .trend-neutral { background: #88888822; color: var(--text-muted); }
 
-    /* ==================== GITHUB PANEL ==================== */
+    .stock-note {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+    }
+
+    /* ===== GITHUB ===== */
     .gh-controls {
       display: flex;
       gap: 0.75rem;
@@ -242,7 +177,6 @@
       flex-wrap: wrap;
       align-items: center;
     }
-
     .gh-select {
       padding: 0.5rem 0.8rem;
       border-radius: 6px;
@@ -251,7 +185,6 @@
       color: var(--text);
       font-size: 0.9rem;
     }
-
     .repo-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -260,9 +193,7 @@
       margin-bottom: 1rem;
       transition: border-color 0.2s;
     }
-
     .repo-card:hover { border-color: var(--accent); }
-
     .repo-rank {
       display: inline-block;
       background: var(--tag-bg);
@@ -273,23 +204,10 @@
       border-radius: 12px;
       margin-bottom: 0.5rem;
     }
-
-    .repo-name {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 0.4rem;
-    }
-
+    .repo-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; }
     .repo-name a { color: var(--accent2); text-decoration: none; }
     .repo-name a:hover { text-decoration: underline; }
-
-    .repo-desc {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      line-height: 1.5;
-      margin-bottom: 0.5rem;
-    }
-
+    .repo-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 0.5rem; }
     .ai-summary {
       background: #1a1a2e;
       border-left: 3px solid var(--accent);
@@ -299,7 +217,6 @@
       font-size: 0.9rem;
       line-height: 1.6;
     }
-
     .ai-summary-label {
       color: var(--accent);
       font-size: 0.75rem;
@@ -309,15 +226,7 @@
       align-items: center;
       gap: 4px;
     }
-
     .ai-summary-text { color: var(--text); }
-
-    .ai-loading {
-      color: var(--text-muted);
-      font-style: italic;
-      font-size: 0.85rem;
-    }
-
     .repo-meta {
       display: flex;
       flex-wrap: wrap;
@@ -326,19 +235,10 @@
       color: var(--text-muted);
       margin-top: 0.5rem;
     }
-
     .repo-meta span { display: flex; align-items: center; gap: 4px; }
+    .lang-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
-    .lang-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    /* Common */
     .loading { text-align: center; padding: 3rem; color: var(--text-muted); }
-
     .spinner {
       width: 36px; height: 36px;
       border: 3px solid var(--border);
@@ -347,9 +247,7 @@
       animation: spin 0.8s linear infinite;
       margin: 0 auto 1rem;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .error-box {
       text-align: center;
       padding: 2rem;
@@ -357,14 +255,6 @@
       background: #ff6b6b15;
       border-radius: 12px;
     }
-
-    .no-key-msg {
-      text-align: center;
-      padding: 3rem;
-      color: var(--text-muted);
-    }
-
-    .no-key-msg p { margin-bottom: 1rem; }
 
     footer {
       text-align: center;
@@ -379,35 +269,51 @@
       .container { padding: 1rem 0.75rem; }
       .nav { flex-direction: column; gap: 0.75rem; align-items: stretch; text-align: center; }
       .nav-tabs { justify-content: center; }
-      .stock-header { flex-direction: column; gap: 0.5rem; }
-      .stock-price { font-size: 2rem; }
       .analysis-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Navigation -->
     <nav class="nav">
       <div class="nav-brand">Dashboard</div>
       <div class="nav-tabs">
         <button class="nav-tab active" data-panel="stock">NVIDIA 주식</button>
         <button class="nav-tab" data-panel="github">GitHub 트렌딩</button>
       </div>
-      <button class="settings-btn" onclick="openSettings()">API 키 설정</button>
+      <button class="settings-btn" onclick="openSettings()">Claude API 키 설정</button>
     </nav>
 
-    <!-- ==================== STOCK PANEL ==================== -->
+    <!-- ===== STOCK PANEL ===== -->
     <div class="panel active" id="stock">
-      <div id="stockContent">
-        <div class="no-key-msg" id="stockNoKey">
-          <p>NVIDIA 주식 데이터를 불러오려면 Alpha Vantage API 키가 필요합니다.</p>
-          <button class="btn btn-primary" onclick="openSettings()">API 키 설정하기</button>
+      <div class="stock-section-title">NVIDIA (NVDA) 실시간 차트</div>
+
+      <!-- TradingView Chart Widget - NO API KEY NEEDED -->
+      <div class="tradingview-container">
+        <div id="tradingview-chart" style="height:500px;"></div>
+      </div>
+
+      <div class="stock-section-title">기술적 분석 요약</div>
+
+      <!-- TradingView Technical Analysis Widget -->
+      <div class="analysis-grid">
+        <div class="analysis-card" style="grid-column: 1 / -1;">
+          <div id="tradingview-analysis" style="height: 425px;"></div>
         </div>
+      </div>
+
+      <!-- TradingView Company Info -->
+      <div class="stock-section-title">기업 정보</div>
+      <div class="analysis-card" style="margin-bottom:1rem;">
+        <div id="tradingview-profile" style="height:200px;"></div>
+      </div>
+
+      <div class="stock-note">
+        TradingView 위젯 기반 &middot; API 키 불필요 &middot; 실시간 데이터
       </div>
     </div>
 
-    <!-- ==================== GITHUB PANEL ==================== -->
+    <!-- ===== GITHUB PANEL ===== -->
     <div class="panel" id="github">
       <div class="gh-controls">
         <select class="gh-select" id="ghPeriod">
@@ -433,26 +339,24 @@
     </div>
 
     <footer>
-      Alpha Vantage API &middot; GitHub Search API &middot; Claude API 한국어 요약
+      TradingView 실시간 차트 &middot; GitHub Search API &middot; Claude API 한국어 요약
     </footer>
   </div>
 
   <!-- Settings Modal -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal">
-      <h2>API 키 설정</h2>
+      <h2>Claude API 키 설정</h2>
       <div class="form-group">
-        <label>Alpha Vantage API Key (주식 데이터)</label>
-        <input type="password" id="alphaKey" placeholder="Alpha Vantage API 키 입력...">
-        <small><a href="https://www.alphavantage.co/support/#api-key" target="_blank">무료 API 키 발급받기</a> (하루 25회 무료)</small>
-      </div>
-      <div class="form-group">
-        <label>Claude API Key (한국어 요약)</label>
+        <label>Claude API Key (GitHub 한국어 요약용)</label>
         <input type="password" id="claudeKey" placeholder="sk-ant-... Claude API 키 입력...">
-        <small><a href="https://console.anthropic.com/settings/keys" target="_blank">Anthropic Console</a>에서 발급</small>
+        <small><a href="https://console.anthropic.com/settings/keys" target="_blank">Anthropic Console</a>에서 발급받으세요</small>
       </div>
       <div class="form-group">
-        <small style="color:#ff6b6b">* Claude API는 브라우저 CORS 제한으로 직접 호출이 안될 수 있습니다. 프록시 서버 또는 CORS 확장 프로그램이 필요할 수 있습니다.</small>
+        <small style="color:var(--accent)">* NVIDIA 주식 차트는 API 키 없이 TradingView 위젯으로 제공됩니다.</small>
+      </div>
+      <div class="form-group">
+        <small style="color:#ff6b6b">* Claude API는 브라우저 CORS 제한이 있을 수 있습니다. 프록시 또는 CORS 확장이 필요할 수 있습니다.</small>
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeSettings()">취소</button>
@@ -461,35 +365,71 @@
     </div>
   </div>
 
+  <!-- TradingView Widget Scripts -->
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
   <script>
-    // ==================== STORAGE ====================
-    const KEYS = { alpha: 'dash_alpha_key', claude: 'dash_claude_key' };
-
-    function getKey(name) { return localStorage.getItem(KEYS[name]) || ''; }
-    function setKey(name, val) { localStorage.setItem(KEYS[name], val); }
-
-    function openSettings() {
-      document.getElementById('alphaKey').value = getKey('alpha');
-      document.getElementById('claudeKey').value = getKey('claude');
-      document.getElementById('settingsModal').classList.add('show');
+    // ===== TradingView Widgets =====
+    function loadTradingViewChart() {
+      new TradingView.widget({
+        container_id: 'tradingview-chart',
+        autosize: true,
+        symbol: 'NASDAQ:NVDA',
+        interval: 'D',
+        timezone: 'Asia/Seoul',
+        theme: 'dark',
+        style: '1',
+        locale: 'kr',
+        toolbar_bg: '#12121a',
+        enable_publishing: false,
+        allow_symbol_change: false,
+        hide_top_toolbar: false,
+        hide_legend: false,
+        save_image: false,
+        studies: ['MASimple@tv-basicstudies', 'RSI@tv-basicstudies', 'MACD@tv-basicstudies'],
+        backgroundColor: '#12121a',
+        gridColor: '#1e1e2e',
+      });
     }
 
-    function closeSettings() {
-      document.getElementById('settingsModal').classList.remove('show');
+    function loadTradingViewAnalysis() {
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        interval: '1D',
+        width: '100%',
+        height: 425,
+        isTransparent: true,
+        symbol: 'NASDAQ:NVDA',
+        showIntervalTabs: true,
+        displayMode: 'multiple',
+        locale: 'kr',
+        colorTheme: 'dark',
+      });
+      const container = document.createElement('div');
+      container.className = 'tradingview-widget-container';
+      container.appendChild(script);
+      document.getElementById('tradingview-analysis').appendChild(container);
     }
 
-    function saveSettings() {
-      const alpha = document.getElementById('alphaKey').value.trim();
-      const claude = document.getElementById('claudeKey').value.trim();
-      if (alpha) setKey('alpha', alpha);
-      if (claude) setKey('claude', claude);
-      closeSettings();
-      // Reload current panel
-      if (document.getElementById('stock').classList.contains('active')) loadStock();
-      else loadGithub();
+    function loadTradingViewProfile() {
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        symbol: 'NASDAQ:NVDA',
+        width: '100%',
+        locale: 'kr',
+        colorTheme: 'dark',
+        isTransparent: true,
+      });
+      const container = document.createElement('div');
+      container.className = 'tradingview-widget-container';
+      container.appendChild(script);
+      document.getElementById('tradingview-profile').appendChild(container);
     }
 
-    // ==================== NAV ====================
+    // ===== NAV =====
     document.querySelectorAll('.nav-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -499,276 +439,33 @@
       });
     });
 
-    // ==================== NVIDIA STOCK ====================
+    // ===== SETTINGS =====
+    const CLAUDE_KEY = 'dash_claude_key';
+    function getClaudeKey() { return localStorage.getItem(CLAUDE_KEY) || ''; }
+    function openSettings() {
+      document.getElementById('claudeKey').value = getClaudeKey();
+      document.getElementById('settingsModal').classList.add('show');
+    }
+    function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
+    function saveSettings() {
+      const key = document.getElementById('claudeKey').value.trim();
+      if (key) localStorage.setItem(CLAUDE_KEY, key);
+      closeSettings();
+      loadGithub();
+    }
+    document.getElementById('settingsModal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeSettings();
+    });
+
+    // ===== GITHUB =====
     const LANG_COLORS = {
       JavaScript:'#f1e05a', TypeScript:'#3178c6', Python:'#3572A5',
       Java:'#b07219', Go:'#00ADD8', Rust:'#dea584', C:'#555555',
       'C++':'#f34b7d', 'C#':'#178600', Ruby:'#701516', PHP:'#4F5D95',
-      Swift:'#F05138', Kotlin:'#A97BFF', Dart:'#00B4AB', Shell:'#89e051',
+      Swift:'#F05138', Kotlin:'#A97BFF', Shell:'#89e051',
     };
 
-    let stockChart = null;
-    let currentPeriod = 'daily';
-
-    async function loadStock() {
-      const key = getKey('alpha');
-      const content = document.getElementById('stockContent');
-
-      if (!key) {
-        content.innerHTML = `<div class="no-key-msg"><p>NVIDIA 주식 데이터를 불러오려면<br>Alpha Vantage API 키가 필요합니다.</p><button class="btn btn-primary" onclick="openSettings()">API 키 설정하기</button></div>`;
-        return;
-      }
-
-      content.innerHTML = '<div class="loading"><div class="spinner"></div>NVIDIA (NVDA) 주식 데이터 불러오는 중...</div>';
-
-      try {
-        const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=NVDA&outputsize=full&apikey=${key}`;
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data['Error Message'] || data['Note']) {
-          throw new Error(data['Error Message'] || data['Note']);
-        }
-
-        const timeSeries = data['Time Series (Daily)'];
-        if (!timeSeries) throw new Error('데이터를 가져올 수 없습니다. API 키를 확인해주세요.');
-
-        const entries = Object.entries(timeSeries).sort((a, b) => a[0].localeCompare(b[0]));
-        window._stockData = entries;
-
-        renderStockPanel(entries);
-      } catch (e) {
-        content.innerHTML = `<div class="error-box">오류: ${escapeHtml(e.message)}<br><br><button class="btn btn-primary" onclick="openSettings()">API 키 확인</button></div>`;
-      }
-    }
-
-    function renderStockPanel(entries) {
-      const latest = entries[entries.length - 1];
-      const prev = entries[entries.length - 2];
-      const price = parseFloat(latest[1]['4. close']);
-      const prevPrice = parseFloat(prev[1]['4. close']);
-      const change = price - prevPrice;
-      const changePct = ((change / prevPrice) * 100).toFixed(2);
-      const isUp = change >= 0;
-
-      const content = document.getElementById('stockContent');
-      content.innerHTML = `
-        <div class="stock-header">
-          <div>
-            <div class="stock-name">NVIDIA Corporation (NVDA) &middot; ${latest[0]}</div>
-            <div class="stock-price">$${price.toFixed(2)}</div>
-          </div>
-          <span class="stock-change ${isUp ? 'up' : 'down'}">
-            ${isUp ? '▲' : '▼'} $${Math.abs(change).toFixed(2)} (${isUp ? '+' : ''}${changePct}%)
-          </span>
-        </div>
-
-        <div class="period-tabs">
-          <button class="period-tab active" data-days="30">1개월</button>
-          <button class="period-tab" data-days="90">3개월</button>
-          <button class="period-tab" data-days="180">6개월</button>
-          <button class="period-tab" data-days="365">1년</button>
-          <button class="period-tab" data-days="0">전체</button>
-        </div>
-
-        <div class="chart-container">
-          <canvas id="stockChart" height="300"></canvas>
-        </div>
-
-        <div class="analysis-grid" id="analysisGrid"></div>
-      `;
-
-      document.querySelectorAll('.period-tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const days = parseInt(btn.dataset.days);
-          renderChart(days === 0 ? entries : entries.slice(-days));
-          renderAnalysis(days === 0 ? entries : entries.slice(-days));
-        });
-      });
-
-      renderChart(entries.slice(-30));
-      renderAnalysis(entries.slice(-30));
-    }
-
-    function renderChart(data) {
-      const ctx = document.getElementById('stockChart').getContext('2d');
-      if (stockChart) stockChart.destroy();
-
-      const labels = data.map(d => d[0]);
-      const closes = data.map(d => parseFloat(d[1]['4. close']));
-      const volumes = data.map(d => parseInt(d[1]['5. volume']));
-
-      // Moving averages
-      const ma5 = movingAvg(closes, 5);
-      const ma20 = movingAvg(closes, 20);
-
-      const isUp = closes[closes.length - 1] >= closes[0];
-
-      stockChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            {
-              label: '종가 (Close)',
-              data: closes,
-              borderColor: isUp ? '#00d26a' : '#ff4757',
-              backgroundColor: isUp ? '#00d26a15' : '#ff475715',
-              fill: true,
-              tension: 0.3,
-              pointRadius: 0,
-              borderWidth: 2,
-            },
-            {
-              label: '5일 이동평균',
-              data: ma5,
-              borderColor: '#5ce1e6',
-              borderWidth: 1.5,
-              borderDash: [4, 2],
-              pointRadius: 0,
-              fill: false,
-            },
-            {
-              label: '20일 이동평균',
-              data: ma20,
-              borderColor: '#ff9f43',
-              borderWidth: 1.5,
-              borderDash: [6, 3],
-              pointRadius: 0,
-              fill: false,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: { labels: { color: '#8888a0', font: { size: 11 } } },
-            tooltip: {
-              backgroundColor: '#1a1a2e',
-              titleColor: '#e8e8f0',
-              bodyColor: '#e8e8f0',
-              borderColor: '#2a2a3e',
-              borderWidth: 1,
-            },
-          },
-          scales: {
-            x: {
-              ticks: { color: '#666680', maxTicksLimit: 10, font: { size: 10 } },
-              grid: { color: '#1a1a2a' },
-            },
-            y: {
-              ticks: { color: '#666680', font: { size: 10 }, callback: v => '$' + v.toFixed(0) },
-              grid: { color: '#1a1a2a' },
-            },
-          },
-        },
-      });
-    }
-
-    function movingAvg(arr, window) {
-      return arr.map((_, i) => {
-        if (i < window - 1) return null;
-        const slice = arr.slice(i - window + 1, i + 1);
-        return slice.reduce((a, b) => a + b, 0) / window;
-      });
-    }
-
-    function renderAnalysis(data) {
-      const closes = data.map(d => parseFloat(d[1]['4. close']));
-      const highs = data.map(d => parseFloat(d[1]['2. high']));
-      const lows = data.map(d => parseFloat(d[1]['3. low']));
-      const volumes = data.map(d => parseInt(d[1]['5. volume']));
-
-      const first = closes[0];
-      const last = closes[closes.length - 1];
-      const change = ((last - first) / first * 100).toFixed(2);
-      const high = Math.max(...highs);
-      const low = Math.min(...lows);
-      const avgVol = (volumes.reduce((a, b) => a + b, 0) / volumes.length);
-
-      // Volatility (standard deviation)
-      const mean = closes.reduce((a, b) => a + b, 0) / closes.length;
-      const variance = closes.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / closes.length;
-      const volatility = Math.sqrt(variance).toFixed(2);
-
-      // RSI (14-day)
-      const rsi = calcRSI(closes, 14);
-
-      // Trend
-      const ma5 = closes.slice(-5).reduce((a, b) => a + b, 0) / 5;
-      const ma20 = closes.slice(-20).reduce((a, b) => a + b, 0) / Math.min(20, closes.length);
-      let trend, trendClass, trendKo;
-      if (ma5 > ma20 * 1.02) { trend = 'BULLISH'; trendClass = 'trend-up'; trendKo = '상승 추세'; }
-      else if (ma5 < ma20 * 0.98) { trend = 'BEARISH'; trendClass = 'trend-down'; trendKo = '하락 추세'; }
-      else { trend = 'NEUTRAL'; trendClass = 'trend-neutral'; trendKo = '횡보 추세'; }
-
-      // RSI interpretation
-      let rsiText, rsiClass;
-      if (rsi > 70) { rsiText = '과매수 구간'; rsiClass = 'trend-down'; }
-      else if (rsi < 30) { rsiText = '과매도 구간'; rsiClass = 'trend-up'; }
-      else { rsiText = '중립 구간'; rsiClass = 'trend-neutral'; }
-
-      document.getElementById('analysisGrid').innerHTML = `
-        <div class="analysis-card">
-          <h3>추세 분석</h3>
-          <span class="trend-indicator ${trendClass}">${trend}</span>
-          <div class="analysis-sub" style="margin-top:0.5rem">${trendKo} (5일 MA vs 20일 MA)</div>
-        </div>
-        <div class="analysis-card">
-          <h3>기간 수익률</h3>
-          <div class="analysis-value" style="color:${parseFloat(change) >= 0 ? 'var(--green)' : 'var(--red)'}">
-            ${parseFloat(change) >= 0 ? '+' : ''}${change}%
-          </div>
-          <div class="analysis-sub">$${first.toFixed(2)} → $${last.toFixed(2)}</div>
-        </div>
-        <div class="analysis-card">
-          <h3>RSI (14일)</h3>
-          <div class="analysis-value">${rsi.toFixed(1)}</div>
-          <span class="trend-indicator ${rsiClass}">${rsiText}</span>
-        </div>
-        <div class="analysis-card">
-          <h3>가격 범위</h3>
-          <div class="analysis-value">$${low.toFixed(2)} ~ $${high.toFixed(2)}</div>
-          <div class="analysis-sub">변동폭: $${(high - low).toFixed(2)}</div>
-        </div>
-        <div class="analysis-card">
-          <h3>변동성 (표준편차)</h3>
-          <div class="analysis-value">$${volatility}</div>
-          <div class="analysis-sub">평균가 대비 ${(parseFloat(volatility) / mean * 100).toFixed(1)}%</div>
-        </div>
-        <div class="analysis-card">
-          <h3>평균 거래량</h3>
-          <div class="analysis-value">${formatBigNumber(avgVol)}</div>
-          <div class="analysis-sub">일일 평균 거래량</div>
-        </div>
-      `;
-    }
-
-    function calcRSI(closes, period) {
-      if (closes.length < period + 1) return 50;
-      let gains = 0, losses = 0;
-      for (let i = closes.length - period; i < closes.length; i++) {
-        const diff = closes[i] - closes[i - 1];
-        if (diff > 0) gains += diff;
-        else losses -= diff;
-      }
-      const avgGain = gains / period;
-      const avgLoss = losses / period;
-      if (avgLoss === 0) return 100;
-      const rs = avgGain / avgLoss;
-      return 100 - (100 / (1 + rs));
-    }
-
-    function formatBigNumber(n) {
-      if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
-      if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
-      if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
-      return n.toFixed(0);
-    }
+    function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
     function formatStarCount(n) {
       if (n >= 10000) return (n / 10000).toFixed(1) + '만';
@@ -776,54 +473,38 @@
       return n.toString();
     }
 
-    function escapeHtml(str) {
-      const d = document.createElement('div');
-      d.textContent = str;
-      return d.innerHTML;
-    }
-
-    // ==================== GITHUB TRENDING ====================
     async function loadGithub() {
       const days = parseInt(document.getElementById('ghPeriod').value);
       const lang = document.getElementById('ghLang').value;
-      const listEl = document.getElementById('ghList');
-
-      listEl.innerHTML = '<div class="loading"><div class="spinner"></div>GitHub 트렌딩 불러오는 중...</div>';
+      const el = document.getElementById('ghList');
+      el.innerHTML = '<div class="loading"><div class="spinner"></div>GitHub 트렌딩 불러오는 중...</div>';
 
       try {
         const since = new Date(Date.now() - days * 86400000).toISOString().split('T')[0];
         let q = `created:>${since}`;
         if (lang) q += `+language:${lang}`;
         const url = `https://api.github.com/search/repositories?q=${q}&sort=stars&order=desc&per_page=5`;
-
         const res = await fetch(url);
         if (!res.ok) throw new Error(`GitHub API 오류: ${res.status}`);
         const data = await res.json();
         const repos = data.items || [];
-
-        if (!repos.length) {
-          listEl.innerHTML = '<div class="error-box">검색 결과가 없습니다.</div>';
-          return;
-        }
-
-        renderGithubRepos(repos);
+        if (!repos.length) { el.innerHTML = '<div class="error-box">검색 결과가 없습니다.</div>'; return; }
+        renderRepos(repos);
       } catch (e) {
-        listEl.innerHTML = `<div class="error-box">오류: ${escapeHtml(e.message)}</div>`;
+        el.innerHTML = `<div class="error-box">오류: ${escapeHtml(e.message)}</div>`;
       }
     }
 
-    function renderGithubRepos(repos) {
-      const listEl = document.getElementById('ghList');
-      listEl.innerHTML = repos.map((repo, i) => `
+    function renderRepos(repos) {
+      const el = document.getElementById('ghList');
+      el.innerHTML = repos.map((repo, i) => `
         <div class="repo-card">
           <span class="repo-rank">#${i + 1}</span>
-          <div class="repo-name">
-            <a href="${repo.html_url}" target="_blank" rel="noopener">${escapeHtml(repo.full_name)}</a>
-          </div>
+          <div class="repo-name"><a href="${repo.html_url}" target="_blank" rel="noopener">${escapeHtml(repo.full_name)}</a></div>
           <div class="repo-desc">${escapeHtml(repo.description || '설명 없음')}</div>
           <div class="ai-summary" id="summary-${i}">
             <div class="ai-summary-label">Claude AI 한국어 요약</div>
-            <div class="ai-loading" id="summary-text-${i}">요약 생성 중...</div>
+            <div class="ai-summary-text" id="summary-text-${i}"><span style="color:var(--text-muted);font-style:italic">요약 생성 중...</span></div>
           </div>
           <div class="repo-meta">
             ${repo.language ? `<span><span class="lang-dot" style="background:${LANG_COLORS[repo.language] || '#8888a0'}"></span> ${repo.language}</span>` : ''}
@@ -832,17 +513,15 @@
           </div>
         </div>
       `).join('');
-
-      // Generate summaries
       repos.forEach((repo, i) => generateSummary(repo, i));
     }
 
     async function generateSummary(repo, index) {
       const el = document.getElementById(`summary-text-${index}`);
-      const claudeKey = getKey('claude');
+      const claudeKey = getClaudeKey();
 
       if (!claudeKey) {
-        el.innerHTML = `<span style="color:var(--text-muted)">Claude API 키를 설정하면 AI 요약이 제공됩니다. → <a href="#" onclick="openSettings();return false" style="color:var(--accent)">설정하기</a></span>`;
+        el.innerHTML = `<span style="color:var(--text-muted)">Claude API 키를 설정하면 AI 요약이 제공됩니다. <a href="#" onclick="openSettings();return false" style="color:var(--accent)">설정하기</a></span>`;
         return;
       }
 
@@ -877,26 +556,17 @@
 
         const data = await res.json();
         const text = data.content?.[0]?.text || '요약을 생성할 수 없습니다.';
-        el.className = 'ai-summary-text';
         el.textContent = text;
       } catch (e) {
-        el.className = 'ai-summary-text';
         el.innerHTML = `<span style="color:var(--red);font-size:0.85rem">요약 실패: ${escapeHtml(e.message)}</span>`;
       }
     }
 
-    // ==================== INIT ====================
-    function init() {
-      if (getKey('alpha')) loadStock();
-      loadGithub();
-    }
-
-    // Close modal on overlay click
-    document.getElementById('settingsModal').addEventListener('click', e => {
-      if (e.target === e.currentTarget) closeSettings();
-    });
-
-    init();
+    // ===== INIT =====
+    loadTradingViewChart();
+    loadTradingViewAnalysis();
+    loadTradingViewProfile();
+    loadGithub();
   </script>
 </body>
 </html>

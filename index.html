@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NVIDIA 주식 분석 & GitHub 트렌딩</title>
+  <title>HR AX Command Center</title>
   <style>
     :root {
       --bg: #0a0a0f;
@@ -265,11 +265,377 @@
       font-size: 0.8rem;
     }
 
+    /* ===== HR AX COMMAND CENTER ===== */
+    .ax-section { margin-bottom: 2.5rem; }
+    .ax-section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+    }
+    .ax-section-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .ax-section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .ax-section-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Sub-navigation for HR AX sections */
+    .ax-subnav {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      background: var(--card-bg);
+      padding: 0.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .ax-subnav-btn {
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .ax-subnav-btn:hover { color: var(--text); background: rgba(124,92,252,0.08); }
+    .ax-subnav-btn.active { color: #fff; background: var(--accent); }
+    .ax-sub-panel { display: none; }
+    .ax-sub-panel.active { display: block; }
+
+    /* KPI Dashboard */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+    .kpi-card.purple::before { background: var(--accent); }
+    .kpi-card.cyan::before { background: var(--accent2); }
+    .kpi-card.green::before { background: var(--green); }
+    .kpi-card.orange::before { background: #ff9f43; }
+    .kpi-label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.6rem; }
+    .kpi-value { font-size: 2rem; font-weight: 800; margin-bottom: 0.3rem; }
+    .kpi-value.purple { color: var(--accent); }
+    .kpi-value.cyan { color: var(--accent2); }
+    .kpi-value.green { color: var(--green); }
+    .kpi-value.orange { color: #ff9f43; }
+    .kpi-change { font-size: 0.8rem; display: flex; align-items: center; gap: 4px; }
+    .kpi-change.up { color: var(--green); }
+    .kpi-change.down { color: var(--red); }
+    .kpi-bar-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      margin-top: 0.8rem;
+      overflow: hidden;
+    }
+    .kpi-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1s ease;
+    }
+
+    /* Process Map */
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.2rem;
+    }
+    .process-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      transition: all 0.3s;
+    }
+    .process-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .process-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .process-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .process-card-title { font-weight: 700; font-size: 1rem; }
+    .process-card-sub { font-size: 0.78rem; color: var(--text-muted); }
+    .process-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .process-item:last-child { border-bottom: none; }
+    .process-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+    .process-status {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+    .status-active { background: #00d26a22; color: var(--green); }
+    .status-pilot { background: #ff9f4322; color: #ff9f43; }
+    .status-planned { background: #7c5cfc22; color: var(--accent); }
+
+    /* Timeline / Roadmap */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent), var(--accent2), var(--green));
+      border-radius: 1px;
+    }
+    .timeline-phase {
+      position: relative;
+      margin-bottom: 2rem;
+      padding: 1.2rem 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+    .timeline-phase::before {
+      content: '';
+      position: absolute;
+      left: -1.7rem; top: 1.5rem;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      background: var(--bg);
+    }
+    .timeline-phase.phase-current::before { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+    .timeline-phase.phase-done::before { background: var(--green); border-color: var(--green); }
+    .timeline-phase.phase-future::before { border-color: var(--text-muted); }
+    .timeline-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+    }
+    .badge-done { background: #00d26a22; color: var(--green); }
+    .badge-current { background: var(--tag-bg); color: var(--accent); }
+    .badge-future { background: #88888822; color: var(--text-muted); }
+    .timeline-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.3rem; }
+    .timeline-period { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.7rem; }
+    .timeline-items { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .timeline-tag {
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: rgba(124,92,252,0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* AI Competency Diagnosis */
+    .diag-intro {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .diag-intro p { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 1rem; }
+    .diag-form {
+      display: grid;
+      gap: 1rem;
+    }
+    .diag-question {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1.4rem;
+    }
+    .diag-q-text { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.8rem; }
+    .diag-q-num { color: var(--accent); font-weight: 700; margin-right: 0.4rem; }
+    .diag-options {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .diag-option {
+      padding: 0.4rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .diag-option:hover { border-color: var(--accent); color: var(--text); }
+    .diag-option.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .diag-result {
+      display: none;
+      background: var(--card-bg);
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .diag-result.show { display: block; }
+    .diag-score {
+      font-size: 3.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .diag-level {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0.5rem 0;
+    }
+    .diag-detail { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+    .diag-radar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+    }
+    .diag-radar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+    }
+    .diag-radar-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .diag-radar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    /* Tool Catalog */
+    .catalog-filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+    }
+    .catalog-filter-btn {
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .catalog-filter-btn:hover { border-color: var(--accent); color: var(--text); }
+    .catalog-filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    .tool-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.4rem;
+      transition: all 0.3s;
+    }
+    .tool-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .tool-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+    }
+    .tool-name { font-weight: 700; font-size: 1rem; }
+    .tool-category {
+      font-size: 0.72rem;
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .cat-recruit { background: #3572A522; color: #5ba3f5; }
+    .cat-edu { background: #00d26a22; color: var(--green); }
+    .cat-eval { background: #ff9f4322; color: #ff9f43; }
+    .cat-culture { background: #e84393aa; color: #fd79a8; }
+    .cat-general { background: var(--tag-bg); color: var(--accent); }
+    .tool-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.8rem; }
+    .tool-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tool-tag {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(124,92,252,0.08);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
     @media (max-width: 600px) {
       .container { padding: 1rem 0.75rem; }
       .nav { flex-direction: column; gap: 0.75rem; align-items: stretch; text-align: center; }
-      .nav-tabs { justify-content: center; }
+      .nav-tabs { justify-content: center; flex-wrap: wrap; }
       .analysis-grid { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .process-grid { grid-template-columns: 1fr; }
+      .catalog-grid { grid-template-columns: 1fr; }
+      .ax-subnav { justify-content: center; }
     }
   </style>
 </head>
@@ -278,14 +644,353 @@
     <nav class="nav">
       <div class="nav-brand">Dashboard</div>
       <div class="nav-tabs">
-        <button class="nav-tab active" data-panel="stock">NVIDIA 주식</button>
+        <button class="nav-tab active" data-panel="hrax">HR AX Center</button>
+        <button class="nav-tab" data-panel="stock">NVIDIA 주식</button>
         <button class="nav-tab" data-panel="github">GitHub 트렌딩</button>
       </div>
       <button class="settings-btn" onclick="openSettings()">Claude API 키 설정</button>
     </nav>
 
+    <!-- ===== HR AX COMMAND CENTER ===== -->
+    <div class="panel active" id="hrax">
+
+      <!-- Sub Navigation -->
+      <div class="ax-subnav">
+        <button class="ax-subnav-btn active" data-axpanel="ax-kpi">AX 추진 현황</button>
+        <button class="ax-subnav-btn" data-axpanel="ax-process">HR 프로세스별 AI 적용</button>
+        <button class="ax-subnav-btn" data-axpanel="ax-roadmap">AX 로드맵</button>
+        <button class="ax-subnav-btn" data-axpanel="ax-diagnosis">AI 역량 진단</button>
+        <button class="ax-subnav-btn" data-axpanel="ax-catalog">AI 도구 카탈로그</button>
+      </div>
+
+      <!-- ===== 1. AX 추진 현황 KPI ===== -->
+      <div class="ax-sub-panel active" id="ax-kpi">
+        <div class="ax-section">
+          <div class="ax-section-header">
+            <div class="ax-section-icon" style="background:var(--tag-bg);color:var(--accent);">&#128202;</div>
+            <div>
+              <div class="ax-section-title">AX 추진 현황 대시보드</div>
+              <div class="ax-section-desc">HR AI Transformation 핵심 KPI 실시간 모니터링</div>
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card purple">
+              <div class="kpi-label">AI 도입률</div>
+              <div class="kpi-value purple">73%</div>
+              <div class="kpi-change up">&#9650; 12%p vs 전분기</div>
+              <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:73%;background:var(--accent);"></div></div>
+            </div>
+            <div class="kpi-card cyan">
+              <div class="kpi-label">업무 자동화율</div>
+              <div class="kpi-value cyan">58%</div>
+              <div class="kpi-change up">&#9650; 8%p vs 전분기</div>
+              <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:58%;background:var(--accent2);"></div></div>
+            </div>
+            <div class="kpi-card green">
+              <div class="kpi-label">AI 교육 이수율</div>
+              <div class="kpi-value green">89%</div>
+              <div class="kpi-change up">&#9650; 15%p vs 전분기</div>
+              <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:89%;background:var(--green);"></div></div>
+            </div>
+            <div class="kpi-card orange">
+              <div class="kpi-label">직원 만족도 (AI 도구)</div>
+              <div class="kpi-value orange">4.2<span style="font-size:1rem;color:var(--text-muted)">/5.0</span></div>
+              <div class="kpi-change up">&#9650; 0.5 vs 전분기</div>
+              <div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:84%;background:#ff9f43;"></div></div>
+            </div>
+          </div>
+
+          <!-- 추가 KPI 상세 -->
+          <div class="kpi-grid">
+            <div class="kpi-card purple">
+              <div class="kpi-label">AI 처리 건수 (월)</div>
+              <div class="kpi-value purple">12,847</div>
+              <div class="kpi-change up">&#9650; 34% vs 전월</div>
+            </div>
+            <div class="kpi-card cyan">
+              <div class="kpi-label">평균 처리시간 단축</div>
+              <div class="kpi-value cyan">67%</div>
+              <div class="kpi-change up">&#9650; 기존 대비</div>
+            </div>
+            <div class="kpi-card green">
+              <div class="kpi-label">비용 절감액 (분기)</div>
+              <div class="kpi-value green">2.4<span style="font-size:1rem;color:var(--text-muted)">억원</span></div>
+              <div class="kpi-change up">&#9650; 18% vs 전분기</div>
+            </div>
+            <div class="kpi-card orange">
+              <div class="kpi-label">AI 도구 활성 사용자</div>
+              <div class="kpi-value orange">847<span style="font-size:1rem;color:var(--text-muted)">명</span></div>
+              <div class="kpi-change up">&#9650; 23% vs 전월</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 2. HR 프로세스별 AI 적용 ===== -->
+      <div class="ax-sub-panel" id="ax-process">
+        <div class="ax-section">
+          <div class="ax-section-header">
+            <div class="ax-section-icon" style="background:#3572A522;color:#5ba3f5;">&#9881;</div>
+            <div>
+              <div class="ax-section-title">HR 프로세스별 AI 적용 현황</div>
+              <div class="ax-section-desc">채용 / 교육 / 평가 / 조직문화 4대 영역 AI 활용 맵</div>
+            </div>
+          </div>
+
+          <div class="process-grid">
+            <!-- 채용 -->
+            <div class="process-card">
+              <div class="process-card-header">
+                <div class="process-icon" style="background:#3572A522;color:#5ba3f5;">&#128188;</div>
+                <div>
+                  <div class="process-card-title">채용 (Recruiting)</div>
+                  <div class="process-card-sub">AI 적용률 82%</div>
+                </div>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--green);"></div>
+                <span>AI 이력서 스크리닝 자동화</span>
+                <span class="process-status status-active">운영중</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--green);"></div>
+                <span>AI 기반 직무 적합도 매칭</span>
+                <span class="process-status status-active">운영중</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:#ff9f43;"></div>
+                <span>AI 면접 질문 생성기</span>
+                <span class="process-status status-pilot">파일럿</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--accent);"></div>
+                <span>AI 채용 예측 분석</span>
+                <span class="process-status status-planned">계획</span>
+              </div>
+            </div>
+
+            <!-- 교육 -->
+            <div class="process-card">
+              <div class="process-card-header">
+                <div class="process-icon" style="background:#00d26a22;color:var(--green);">&#127891;</div>
+                <div>
+                  <div class="process-card-title">교육 (L&D)</div>
+                  <div class="process-card-sub">AI 적용률 75%</div>
+                </div>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--green);"></div>
+                <span>AI 개인화 학습 경로 추천</span>
+                <span class="process-status status-active">운영중</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--green);"></div>
+                <span>AI 교육 콘텐츠 자동 생성</span>
+                <span class="process-status status-active">운영중</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:#ff9f43;"></div>
+                <span>AI 스킬갭 분석 대시보드</span>
+                <span class="process-status status-pilot">파일럿</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--accent);"></div>
+                <span>AI 멘토링 챗봇</span>
+                <span class="process-status status-planned">계획</span>
+              </div>
+            </div>
+
+            <!-- 평가 -->
+            <div class="process-card">
+              <div class="process-card-header">
+                <div class="process-icon" style="background:#ff9f4322;color:#ff9f43;">&#128200;</div>
+                <div>
+                  <div class="process-card-title">평가 (Performance)</div>
+                  <div class="process-card-sub">AI 적용률 60%</div>
+                </div>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--green);"></div>
+                <span>AI 성과 데이터 분석</span>
+                <span class="process-status status-active">운영중</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:#ff9f43;"></div>
+                <span>AI 360도 피드백 요약</span>
+                <span class="process-status status-pilot">파일럿</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:#ff9f43;"></div>
+                <span>AI 목표 설정 어시스턴트</span>
+                <span class="process-status status-pilot">파일럿</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--accent);"></div>
+                <span>AI 보상 최적화 모델</span>
+                <span class="process-status status-planned">계획</span>
+              </div>
+            </div>
+
+            <!-- 조직문화 -->
+            <div class="process-card">
+              <div class="process-card-header">
+                <div class="process-icon" style="background:#e8439322;color:#fd79a8;">&#127793;</div>
+                <div>
+                  <div class="process-card-title">조직문화 (Culture)</div>
+                  <div class="process-card-sub">AI 적용률 45%</div>
+                </div>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--green);"></div>
+                <span>AI 직원 감성 분석 (펄스 서베이)</span>
+                <span class="process-status status-active">운영중</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:#ff9f43;"></div>
+                <span>AI 이탈 위험 예측</span>
+                <span class="process-status status-pilot">파일럿</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--accent);"></div>
+                <span>AI 조직 네트워크 분석 (ONA)</span>
+                <span class="process-status status-planned">계획</span>
+              </div>
+              <div class="process-item">
+                <div class="process-dot" style="background:var(--accent);"></div>
+                <span>AI 다양성·포용성 분석</span>
+                <span class="process-status status-planned">계획</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 3. AX 로드맵 타임라인 ===== -->
+      <div class="ax-sub-panel" id="ax-roadmap">
+        <div class="ax-section">
+          <div class="ax-section-header">
+            <div class="ax-section-icon" style="background:#00d26a22;color:var(--green);">&#128197;</div>
+            <div>
+              <div class="ax-section-title">AX 로드맵 타임라인</div>
+              <div class="ax-section-desc">Phase별 HR AI Transformation 추진 계획</div>
+            </div>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-phase phase-done">
+              <span class="timeline-badge badge-done">COMPLETED</span>
+              <div class="timeline-title">Phase 1 — Foundation (기반 구축)</div>
+              <div class="timeline-period">2025 Q1 ~ Q2</div>
+              <div class="timeline-items">
+                <span class="timeline-tag">HR 데이터 통합 플랫폼 구축</span>
+                <span class="timeline-tag">AI 윤리 가이드라인 수립</span>
+                <span class="timeline-tag">파일럿 TF 구성</span>
+                <span class="timeline-tag">AI 리터러시 기초 교육</span>
+                <span class="timeline-tag">채용 AI 스크리닝 PoC</span>
+              </div>
+            </div>
+
+            <div class="timeline-phase phase-current">
+              <span class="timeline-badge badge-current">IN PROGRESS</span>
+              <div class="timeline-title">Phase 2 — Acceleration (확산 가속)</div>
+              <div class="timeline-period">2025 Q3 ~ 2026 Q2</div>
+              <div class="timeline-items">
+                <span class="timeline-tag">채용/교육 AI 전면 도입</span>
+                <span class="timeline-tag">AI 성과 분석 파일럿</span>
+                <span class="timeline-tag">AI 챗봇 (HR 상담) 런칭</span>
+                <span class="timeline-tag">직원 AI 역량 진단 체계</span>
+                <span class="timeline-tag">AI CoE 운영 본격화</span>
+              </div>
+            </div>
+
+            <div class="timeline-phase phase-future">
+              <span class="timeline-badge badge-future">PLANNED</span>
+              <div class="timeline-title">Phase 3 — Optimization (고도화)</div>
+              <div class="timeline-period">2026 Q3 ~ 2027 Q1</div>
+              <div class="timeline-items">
+                <span class="timeline-tag">평가/보상 AI 최적화</span>
+                <span class="timeline-tag">AI 기반 전략적 인력 계획</span>
+                <span class="timeline-tag">조직문화 AI 분석 도입</span>
+                <span class="timeline-tag">AI 거버넌스 프레임워크</span>
+              </div>
+            </div>
+
+            <div class="timeline-phase phase-future">
+              <span class="timeline-badge badge-future">VISION</span>
+              <div class="timeline-title">Phase 4 — Intelligence (자율화)</div>
+              <div class="timeline-period">2027 Q2 ~</div>
+              <div class="timeline-items">
+                <span class="timeline-tag">AI-Native HR 운영 체계</span>
+                <span class="timeline-tag">Agentic HR Workflow</span>
+                <span class="timeline-tag">예측적 인재 관리</span>
+                <span class="timeline-tag">자율 HR 의사결정 지원</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 4. AI 역량 진단 ===== -->
+      <div class="ax-sub-panel" id="ax-diagnosis">
+        <div class="ax-section">
+          <div class="ax-section-header">
+            <div class="ax-section-icon" style="background:#ff9f4322;color:#ff9f43;">&#129504;</div>
+            <div>
+              <div class="ax-section-title">AI 역량 셀프 진단</div>
+              <div class="ax-section-desc">나의 AI 활용 역량을 진단하고 맞춤 성장 로드맵을 확인하세요</div>
+            </div>
+          </div>
+
+          <div class="diag-intro">
+            <p>10개 질문에 응답하여 AI 역량 수준을 진단합니다. 각 질문에서 가장 가까운 답을 선택하세요.</p>
+            <button class="btn btn-primary" onclick="startDiagnosis()" id="diagStartBtn">진단 시작하기</button>
+          </div>
+
+          <div id="diagForm" style="display:none;">
+            <div class="diag-form" id="diagQuestions"></div>
+            <div style="text-align:center;margin-top:1.5rem;">
+              <button class="btn btn-primary" onclick="submitDiagnosis()" style="padding:0.7rem 2.5rem;font-size:1rem;">결과 확인</button>
+            </div>
+          </div>
+
+          <div class="diag-result" id="diagResult">
+            <div class="diag-score" id="diagScoreVal"></div>
+            <div class="diag-level" id="diagLevelText"></div>
+            <div class="diag-detail" id="diagDetailText"></div>
+            <div class="diag-radar" id="diagRadar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 5. AI 도구 카탈로그 ===== -->
+      <div class="ax-sub-panel" id="ax-catalog">
+        <div class="ax-section">
+          <div class="ax-section-header">
+            <div class="ax-section-icon" style="background:var(--tag-bg);color:var(--accent);">&#128230;</div>
+            <div>
+              <div class="ax-section-title">HR AI 도구 카탈로그</div>
+              <div class="ax-section-desc">HR 현업에서 바로 활용할 수 있는 AI 도구 큐레이션</div>
+            </div>
+          </div>
+
+          <div class="catalog-filters">
+            <button class="catalog-filter-btn active" onclick="filterCatalog('all',this)">전체</button>
+            <button class="catalog-filter-btn" onclick="filterCatalog('recruit',this)">채용</button>
+            <button class="catalog-filter-btn" onclick="filterCatalog('edu',this)">교육</button>
+            <button class="catalog-filter-btn" onclick="filterCatalog('eval',this)">평가</button>
+            <button class="catalog-filter-btn" onclick="filterCatalog('culture',this)">조직문화</button>
+            <button class="catalog-filter-btn" onclick="filterCatalog('general',this)">범용</button>
+          </div>
+
+          <div class="catalog-grid" id="catalogGrid"></div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- ===== STOCK PANEL ===== -->
-    <div class="panel active" id="stock">
+    <div class="panel" id="stock">
       <div class="stock-section-title">NVIDIA (NVDA) 실시간 차트</div>
 
       <!-- TradingView Chart Widget - NO API KEY NEEDED -->
@@ -339,7 +1044,7 @@
     </div>
 
     <footer>
-      TradingView 실시간 차트 &middot; GitHub Search API &middot; Claude API 한국어 요약
+      HR AX Command Center &middot; TradingView &middot; GitHub Search API &middot; Claude API
     </footer>
   </div>
 
@@ -562,7 +1267,148 @@
       }
     }
 
+    // ===== HR AX SUB-NAV =====
+    document.querySelectorAll('.ax-subnav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.ax-subnav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.ax-sub-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.axpanel).classList.add('active');
+      });
+    });
+
+    // ===== AI DIAGNOSIS =====
+    const DIAG_QUESTIONS = [
+      { q: 'ChatGPT, Claude 등 생성형 AI를 업무에 얼마나 자주 사용하시나요?', cat: 'AI 활용 빈도', opts: ['거의 안 씀', '월 1~2회', '주 1~2회', '거의 매일', '하루 여러 번'] },
+      { q: 'AI 프롬프트 작성 시 원하는 결과를 얻기까지 얼마나 걸리나요?', cat: 'AI 활용 빈도', opts: ['시도 안 함', '10회 이상 시도', '5~10회 시도', '2~3회 시도', '1회에 정확히'] },
+      { q: 'AI를 활용한 데이터 분석(엑셀, BI 등) 경험이 있으신가요?', cat: '데이터 분석', opts: ['전혀 없음', '기본 질문만', '간단한 분석', '복잡한 분석', '자동화 구축'] },
+      { q: 'HR 데이터(이직률, 만족도 등)를 AI로 분석해 본 경험이 있나요?', cat: '데이터 분석', opts: ['없음', '관심만 있음', '시도해 봄', '정기적 활용', '의사결정에 반영'] },
+      { q: 'AI 도구로 문서/보고서를 작성하는 수준은?', cat: '콘텐츠 생성', opts: ['사용 안 함', '초안 참고', '초안 후 수정', '고품질 생성', '템플릿 자동화'] },
+      { q: 'AI를 활용한 교육 콘텐츠 제작 경험이 있나요?', cat: '콘텐츠 생성', opts: ['없음', '아이디어만', '간단한 자료', '완성된 과정', '학습경로 설계'] },
+      { q: 'AI 자동화 워크플로우(Zapier, Make 등) 구축 경험이 있나요?', cat: '자동화 역량', opts: ['모름', '개념만 앎', '간단한 자동화', '복잡한 워크플로우', '시스템 통합'] },
+      { q: 'AI 도구의 한계와 윤리적 이슈에 대한 이해 수준은?', cat: 'AI 리터러시', opts: ['잘 모름', '뉴스 수준', '기본 이해', '심층 이해', '가이드라인 수립'] },
+      { q: 'AI 도입 프로젝트에 참여하거나 주도한 경험이 있나요?', cat: '리더십', opts: ['없음', '참관만', '팀원 참여', '핵심 역할', '프로젝트 리드'] },
+      { q: 'AI 관련 학습(강의, 자격증, 커뮤니티 등)을 얼마나 하고 있나요?', cat: 'AI 리터러시', opts: ['안 함', '가끔 기사', '온라인 강의', '정기적 학습', '강의/멘토링'] },
+    ];
+
+    function startDiagnosis() {
+      document.getElementById('diagStartBtn').style.display = 'none';
+      document.getElementById('diagForm').style.display = 'block';
+      document.getElementById('diagResult').classList.remove('show');
+      const container = document.getElementById('diagQuestions');
+      container.innerHTML = DIAG_QUESTIONS.map((q, i) => `
+        <div class="diag-question">
+          <div class="diag-q-text"><span class="diag-q-num">Q${i + 1}.</span>${q.q}</div>
+          <div class="diag-options">
+            ${q.opts.map((opt, j) => `<button class="diag-option" data-q="${i}" data-v="${j}" onclick="selectDiagOption(this)">${opt}</button>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectDiagOption(btn) {
+      const q = btn.dataset.q;
+      document.querySelectorAll(`.diag-option[data-q="${q}"]`).forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+
+    function submitDiagnosis() {
+      const answers = {};
+      document.querySelectorAll('.diag-option.selected').forEach(b => {
+        answers[b.dataset.q] = parseInt(b.dataset.v);
+      });
+      if (Object.keys(answers).length < 10) {
+        alert('모든 질문에 답변해 주세요.');
+        return;
+      }
+
+      // Calculate scores by category
+      const catScores = {};
+      DIAG_QUESTIONS.forEach((q, i) => {
+        if (!catScores[q.cat]) catScores[q.cat] = [];
+        catScores[q.cat].push(answers[i]);
+      });
+
+      const total = Object.values(answers).reduce((a, b) => a + b, 0);
+      const maxScore = 10 * 4; // 10 questions, max 4 each
+      const pct = Math.round((total / maxScore) * 100);
+
+      let level, detail;
+      if (pct >= 85) {
+        level = 'AI Leader (리더)';
+        detail = 'AI를 전략적으로 활용하고 조직의 AX를 주도할 수 있는 수준입니다. AI CoE 핵심 멤버로 활동하며, 후배 육성과 베스트 프랙티스 공유에 기여해 주세요.';
+      } else if (pct >= 65) {
+        level = 'AI Practitioner (실무자)';
+        detail = 'AI를 일상 업무에 효과적으로 활용하는 수준입니다. 자동화 역량과 데이터 분석 심화 학습을 통해 Leader 레벨로 도약할 수 있습니다.';
+      } else if (pct >= 40) {
+        level = 'AI Explorer (탐색자)';
+        detail = 'AI에 관심을 갖고 기본적인 활용을 시작한 단계입니다. 체계적인 프롬프트 엔지니어링 교육과 실무 적용 프로젝트 참여를 권장합니다.';
+      } else {
+        level = 'AI Beginner (입문자)';
+        detail = 'AI 활용의 첫 걸음을 시작하는 단계입니다. AI 리터러시 기초 교육 이수와 생성형 AI 도구 체험부터 시작해 보세요.';
+      }
+
+      document.getElementById('diagScoreVal').textContent = pct + '점';
+      document.getElementById('diagLevelText').textContent = level;
+      document.getElementById('diagDetailText').textContent = detail;
+
+      // Radar-style category bars
+      const radarHtml = Object.entries(catScores).map(([cat, scores]) => {
+        const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+        const pctCat = Math.round((avg / 4) * 100);
+        return `<div class="diag-radar-item">
+          <span style="min-width:90px;">${cat}</span>
+          <div class="diag-radar-bar"><div class="diag-radar-fill" style="width:${pctCat}%"></div></div>
+          <span style="min-width:35px;text-align:right;color:var(--accent);">${pctCat}%</span>
+        </div>`;
+      }).join('');
+      document.getElementById('diagRadar').innerHTML = radarHtml;
+
+      document.getElementById('diagResult').classList.add('show');
+      document.getElementById('diagResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // ===== AI TOOL CATALOG =====
+    const AI_TOOLS = [
+      { name: 'Claude (Anthropic)', cat: 'general', catLabel: '범용', catClass: 'cat-general', desc: 'HR 문서 작성, 정책 분석, 직원 커뮤니케이션 초안 등 다목적 AI 어시스턴트. 복잡한 HR 시나리오 분석에 강점.', tags: ['LLM', '문서작성', '분석', '상담'] },
+      { name: 'ChatGPT (OpenAI)', cat: 'general', catLabel: '범용', catClass: 'cat-general', desc: 'HR 업무 전반에 활용 가능한 대화형 AI. 채용공고 작성, 면접 질문 생성, 교육자료 제작 등 폭넓은 활용.', tags: ['LLM', '문서작성', '번역', '브레인스토밍'] },
+      { name: 'HireVue', cat: 'recruit', catLabel: '채용', catClass: 'cat-recruit', desc: 'AI 기반 비디오 면접 및 평가 플랫폼. 후보자 역량을 AI가 분석하여 구조화된 채용 의사결정 지원.', tags: ['면접', '평가', '비디오', '역량분석'] },
+      { name: 'Pymetrics', cat: 'recruit', catLabel: '채용', catClass: 'cat-recruit', desc: '뇌과학 기반 AI 게임 평가 도구. 인지/감성 역량을 측정하여 직무 적합도를 객관적으로 매칭.', tags: ['게임평가', '역량측정', '매칭', '편향제거'] },
+      { name: 'Eightfold AI', cat: 'recruit', catLabel: '채용', catClass: 'cat-recruit', desc: 'AI 인재 인텔리전스 플랫폼. 이력서 스크리닝부터 내부 인재 이동까지 인재 라이프사이클 전체를 지원.', tags: ['인재관리', '스크리닝', '커리어패스', '스킬매핑'] },
+      { name: 'Cornerstone OnDemand', cat: 'edu', catLabel: '교육', catClass: 'cat-edu', desc: 'AI 기반 학습 경험 플랫폼(LXP). 개인화된 학습 경로 추천과 스킬갭 분석으로 효과적인 L&D 운영.', tags: ['LXP', '학습추천', '스킬갭', '경력개발'] },
+      { name: 'Docebo', cat: 'edu', catLabel: '교육', catClass: 'cat-edu', desc: 'AI 파워드 LMS. 자동 콘텐츠 태깅, 학습 추천 엔진, 가상 코칭 등 AI 기능이 내장된 학습 관리 시스템.', tags: ['LMS', 'AI코칭', '콘텐츠태깅', '분석'] },
+      { name: 'Lattice', cat: 'eval', catLabel: '평가', catClass: 'cat-eval', desc: 'AI 기반 성과관리 플랫폼. 목표 설정, 1:1 미팅, 360도 피드백, 성과 리뷰를 AI가 지원.', tags: ['성과관리', 'OKR', '피드백', '리뷰'] },
+      { name: 'Betterworks', cat: 'eval', catLabel: '평가', catClass: 'cat-eval', desc: 'AI가 성과 데이터를 분석하여 매니저에게 인사이트 제공. 편향 감지 및 공정한 평가 지원.', tags: ['성과분석', '편향감지', '목표관리', '인사이트'] },
+      { name: 'Culture Amp', cat: 'culture', catLabel: '조직문화', catClass: 'cat-culture', desc: 'AI 기반 직원 경험 플랫폼. 서베이 분석, 감성 분석, 이탈 예측 등 데이터 기반 조직문화 관리.', tags: ['서베이', '감성분석', '이탈예측', '인사이트'] },
+      { name: 'Peakon (Workday)', cat: 'culture', catLabel: '조직문화', catClass: 'cat-culture', desc: '실시간 직원 의견 수집 및 AI 분석. 자연어 처리로 오픈 텍스트 응답을 자동 분석하여 핵심 이슈 도출.', tags: ['펄스서베이', 'NLP', '실시간', '벤치마크'] },
+      { name: 'Gamma', cat: 'general', catLabel: '범용', catClass: 'cat-general', desc: 'AI 프레젠테이션 생성 도구. HR 보고서, 교육 자료, 온보딩 덱 등을 AI가 자동으로 디자인하여 생성.', tags: ['프레젠테이션', '디자인', '보고서', '자동생성'] },
+      { name: 'Notion AI', cat: 'general', catLabel: '범용', catClass: 'cat-general', desc: 'HR 지식 관리 및 문서 협업 도구. AI가 회의록 요약, 정책 문서 초안, FAQ 자동 생성 등 지원.', tags: ['지식관리', '문서협업', '요약', 'wiki'] },
+      { name: 'Visier', cat: 'eval', catLabel: '평가', catClass: 'cat-eval', desc: 'HR 피플 애널리틱스 플랫폼. AI가 인력 데이터를 분석하여 이직 예측, 다양성 분석, 보상 최적화 등 인사이트 제공.', tags: ['피플애널리틱스', '예측분석', '다양성', '보상'] },
+    ];
+
+    function renderCatalog(filter) {
+      const grid = document.getElementById('catalogGrid');
+      const tools = filter === 'all' ? AI_TOOLS : AI_TOOLS.filter(t => t.cat === filter);
+      grid.innerHTML = tools.map(t => `
+        <div class="tool-card" data-cat="${t.cat}">
+          <div class="tool-card-header">
+            <span class="tool-name">${t.name}</span>
+            <span class="tool-category ${t.catClass}">${t.catLabel}</span>
+          </div>
+          <div class="tool-desc">${t.desc}</div>
+          <div class="tool-tags">${t.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}</div>
+        </div>
+      `).join('');
+    }
+
+    function filterCatalog(filter, btn) {
+      document.querySelectorAll('.catalog-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCatalog(filter);
+    }
+
     // ===== INIT =====
+    renderCatalog('all');
     loadTradingViewChart();
     loadTradingViewAnalysis();
     loadTradingViewProfile();

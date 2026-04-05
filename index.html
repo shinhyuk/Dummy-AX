@@ -3,171 +3,301 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GitHub 트렌딩 - 주간/월간 인기 저장소</title>
+  <title>YouTube 한국 인기 동영상 Top 30</title>
   <style>
     :root {
-      --bg: #0d1117;
-      --card-bg: #161b22;
-      --border: #30363d;
-      --text: #e6edf3;
-      --text-muted: #8b949e;
-      --accent: #58a6ff;
-      --star: #e3b341;
-      --tab-active: #58a6ff;
-      --tag-bg: #1f6feb33;
+      --bg: #0f0f0f;
+      --card-bg: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #f1f1f1;
+      --text-muted: #aaaaaa;
+      --accent: #ff0000;
+      --accent-hover: #cc0000;
+      --tag-bg: #ff000022;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 2rem 1rem;
     }
 
     header {
       text-align: center;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
 
     header h1 {
       font-size: 2rem;
       margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
 
-    header h1 span { color: var(--accent); }
+    .yt-icon {
+      width: 40px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .yt-icon::after {
+      content: '';
+      border-style: solid;
+      border-width: 7px 0 7px 12px;
+      border-color: transparent transparent transparent white;
+    }
 
     header p {
       color: var(--text-muted);
       font-size: 1rem;
     }
 
-    .tabs {
-      display: flex;
-      gap: 0;
-      margin-bottom: 2rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .tab {
-      padding: 0.75rem 1.5rem;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-      background: none;
-      border-top: none;
-      border-left: none;
-      border-right: none;
-    }
-
-    .tab:hover { color: var(--text); }
-
-    .tab.active {
-      color: var(--tab-active);
-      border-bottom-color: var(--tab-active);
-    }
-
-    .section { display: none; }
-    .section.active { display: block; }
-
-    .repo-card {
+    /* API Key Section */
+    .api-key-section {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-      transition: border-color 0.2s;
-    }
-
-    .repo-card:hover { border-color: var(--accent); }
-
-    .repo-rank {
-      display: inline-block;
-      background: var(--tag-bg);
-      color: var(--accent);
-      font-weight: 700;
-      font-size: 0.85rem;
-      padding: 2px 10px;
       border-radius: 12px;
-      margin-bottom: 0.75rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
     }
 
-    .repo-name {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
+    .api-key-section.hidden { display: none; }
+
+    .api-key-section p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
     }
 
-    .repo-name a {
+    .api-key-row {
+      display: flex;
+      gap: 0.5rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .api-key-row input {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .api-key-row input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-outline {
+      background: transparent;
       color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    .btn-outline:hover { background: var(--tag-bg); }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .controls-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0.4rem 1rem;
+      gap: 0.5rem;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 0.9rem;
+      width: 200px;
+      outline: none;
+    }
+
+    .search-box svg { color: var(--text-muted); flex-shrink: 0; }
+
+    .category-select {
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .updated-at {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Video Grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .video-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .thumbnail-wrap {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      background: #000;
+    }
+
+    .thumbnail-wrap img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .rank-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 2px 10px;
+      border-radius: 4px;
+    }
+
+    .duration {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    .video-info {
+      padding: 1rem;
+    }
+
+    .video-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 0.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .video-title a {
+      color: var(--text);
       text-decoration: none;
     }
 
-    .repo-name a:hover { text-decoration: underline; }
+    .video-title a:hover { color: var(--accent); }
 
-    .repo-desc {
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-      line-height: 1.5;
-      font-size: 0.95rem;
-    }
-
-    .repo-summary {
-      background: #1c2536;
-      border-left: 3px solid var(--accent);
-      padding: 0.75rem 1rem;
-      margin: 0.75rem 0;
-      border-radius: 0 6px 6px 0;
-      line-height: 1.6;
-      font-size: 0.95rem;
-    }
-
-    .repo-summary strong {
-      color: var(--accent);
-      font-size: 0.8rem;
-      display: block;
-      margin-bottom: 0.25rem;
-    }
-
-    .repo-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
+    .channel-name {
       font-size: 0.85rem;
       color: var(--text-muted);
-      margin-top: 0.75rem;
+      margin-bottom: 0.4rem;
     }
 
-    .repo-meta span { display: flex; align-items: center; gap: 4px; }
-
-    .lang-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
+    .video-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
 
-    .star-icon { color: var(--star); }
+    .video-stats span {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
 
+    /* Loading & Error */
     .loading {
       text-align: center;
-      padding: 3rem;
+      padding: 4rem;
       color: var(--text-muted);
     }
 
     .spinner {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       border: 3px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
@@ -177,35 +307,12 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .error {
+    .error-box {
       text-align: center;
       padding: 2rem;
       color: #f85149;
       background: #f8514922;
-      border-radius: 8px;
-    }
-
-    .refresh-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--tag-bg);
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 0.5rem 1.2rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-      transition: background 0.2s;
-    }
-
-    .refresh-btn:hover { background: #1f6feb55; }
-
-    .updated-at {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
+      border-radius: 12px;
     }
 
     footer {
@@ -215,208 +322,252 @@
       border-top: 1px solid var(--border);
       color: var(--text-muted);
       font-size: 0.85rem;
+      line-height: 1.8;
     }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
 
     @media (max-width: 600px) {
       .container { padding: 1rem 0.75rem; }
       header h1 { font-size: 1.4rem; }
-      .repo-meta { gap: 0.5rem; font-size: 0.8rem; }
+      .video-grid { grid-template-columns: 1fr; }
+      .search-box input { width: 140px; }
+      .controls { flex-direction: column; align-items: stretch; }
+      .controls-left { flex-direction: column; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>🔥 <span>GitHub 트렌딩</span> 저장소</h1>
-      <p>주간 · 월간 인기 오픈소스 Top 5 — 한국어 요약</p>
+      <h1><span class="yt-icon"></span> YouTube 한국 인기 동영상 Top 30</h1>
+      <p>조회수 기준 한국 관련 인기 동영상을 한눈에</p>
     </header>
 
-    <div class="tabs">
-      <button class="tab active" data-tab="weekly">📅 주간 (Weekly)</button>
-      <button class="tab" data-tab="monthly">📆 월간 (Monthly)</button>
+    <!-- API Key Input -->
+    <div class="api-key-section" id="apiKeySection">
+      <p>
+        YouTube Data API v3 키가 필요합니다.<br>
+        <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" style="color:var(--accent)">Google Cloud Console</a>에서
+        무료로 발급받을 수 있습니다.
+      </p>
+      <div class="api-key-row">
+        <input type="password" id="apiKeyInput" placeholder="YouTube API 키 입력...">
+        <button class="btn btn-primary" onclick="saveApiKey()">저장 및 검색</button>
+      </div>
     </div>
 
-    <button class="refresh-btn" onclick="refreshAll()">🔄 새로고침</button>
-    <div class="updated-at" id="updated-at"></div>
-
-    <div id="weekly" class="section active">
-      <div class="loading"><div class="spinner"></div>주간 트렌딩 불러오는 중...</div>
+    <!-- Controls -->
+    <div class="controls" id="controls" style="display:none">
+      <div class="controls-left">
+        <div class="search-box">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="searchQuery" placeholder="검색어 (예: K-pop, 먹방...)" value="한국">
+        </div>
+        <select class="category-select" id="categorySelect">
+          <option value="">모든 카테고리</option>
+          <option value="10">음악</option>
+          <option value="24">엔터테인먼트</option>
+          <option value="20">게임</option>
+          <option value="22">인물/블로그</option>
+          <option value="28">과학기술</option>
+          <option value="25">뉴스/정치</option>
+          <option value="26">노하우/스타일</option>
+          <option value="17">스포츠</option>
+          <option value="1">영화/애니메이션</option>
+          <option value="27">교육</option>
+        </select>
+        <button class="btn btn-primary" onclick="searchVideos()">검색</button>
+        <button class="btn btn-outline" onclick="showApiKeySection()">API 키 변경</button>
+      </div>
+      <div class="updated-at" id="updatedAt"></div>
     </div>
 
-    <div id="monthly" class="section">
-      <div class="loading"><div class="spinner"></div>월간 트렌딩 불러오는 중...</div>
+    <!-- Video List -->
+    <div id="videoList">
+      <div class="loading" id="initialMsg">
+        <p style="color:var(--text-muted)">API 키를 입력하면 동영상을 불러옵니다.</p>
+      </div>
     </div>
 
     <footer>
-      GitHub Search API 기반 · 스타 증가순 정렬 · 자동 한국어 요약
+      YouTube Data API v3 기반 &middot; 조회수 순 정렬 &middot; 한국 관련 동영상<br>
+      <a href="https://developers.google.com/youtube/v3" target="_blank" rel="noopener">YouTube API 문서</a>
     </footer>
   </div>
 
   <script>
-    const LANG_COLORS = {
-      JavaScript: '#f1e05a', TypeScript: '#3178c6', Python: '#3572A5',
-      Java: '#b07219', Go: '#00ADD8', Rust: '#dea584', C: '#555555',
-      'C++': '#f34b7d', 'C#': '#178600', Ruby: '#701516', PHP: '#4F5D95',
-      Swift: '#F05138', Kotlin: '#A97BFF', Dart: '#00B4AB', Lua: '#000080',
-      Shell: '#89e051', HTML: '#e34c26', CSS: '#563d7c', Vue: '#41b883',
-      Svelte: '#ff3e00', Jupyter: '#F37626', R: '#198CE7', Scala: '#c22d40',
-      Zig: '#ec915c', Elixir: '#6e4a7e', Haskell: '#5e5086', Julia: '#a270ba',
-    };
+    const STORAGE_KEY = 'yt_korea_api_key';
 
-    const KOREAN_SUMMARIES = {
-      'ai': 'AI/인공지능 관련 프로젝트로, 머신러닝 또는 딥러닝 기술을 활용합니다.',
-      'llm': '대규모 언어 모델(LLM) 관련 프로젝트입니다.',
-      'agent': 'AI 에이전트 관련 프로젝트로, 자율적으로 작업을 수행하는 시스템입니다.',
-      'web': '웹 개발 관련 프로젝트로, 프론트엔드 또는 백엔드 기술을 다룹니다.',
-      'framework': '개발 프레임워크로, 앱 개발을 효율적으로 도와줍니다.',
-      'tool': '개발 도구로, 생산성 향상을 위한 유틸리티입니다.',
-      'cli': '커맨드라인 도구로, 터미널에서 사용하는 유틸리티입니다.',
-      'database': '데이터베이스 관련 프로젝트입니다.',
-      'security': '보안 관련 프로젝트입니다.',
-      'mobile': '모바일 앱 개발 관련 프로젝트입니다.',
-      'game': '게임 또는 게임 개발 관련 프로젝트입니다.',
-      'api': 'API 관련 프로젝트로, 서비스 간 통신을 다룹니다.',
-      'devops': 'DevOps/인프라 관련 프로젝트입니다.',
-      'ui': 'UI/UX 관련 프로젝트로, 사용자 인터페이스를 다룹니다.',
-    };
-
-    function generateKoreanSummary(repo) {
-      const desc = (repo.description || '').toLowerCase();
-      const name = repo.name.toLowerCase();
-      const topics = (repo.topics || []).join(' ').toLowerCase();
-      const all = `${desc} ${name} ${topics}`;
-
-      let category = '';
-      if (/\b(llm|language model|gpt|chatgpt|openai|claude|gemini|ollama)\b/.test(all)) category = 'LLM/대규모 언어 모델';
-      else if (/\b(agent|autonomous|agentic|mcp)\b/.test(all)) category = 'AI 에이전트';
-      else if (/\b(ai|artificial|machine.?learn|deep.?learn|neural|transformer|diffusion|stable)\b/.test(all)) category = 'AI/머신러닝';
-      else if (/\b(react|vue|svelte|angular|next|nuxt|frontend|front.end)\b/.test(all)) category = '프론트엔드';
-      else if (/\b(api|backend|server|express|fastapi|django|flask|spring)\b/.test(all)) category = '백엔드/API';
-      else if (/\b(framework|library|sdk|toolkit)\b/.test(all)) category = '프레임워크/라이브러리';
-      else if (/\b(cli|terminal|command.?line|shell)\b/.test(all)) category = 'CLI 도구';
-      else if (/\b(database|db|sql|mongo|redis|postgres)\b/.test(all)) category = '데이터베이스';
-      else if (/\b(security|crypto|auth|hack|pentest|vulnerab)\b/.test(all)) category = '보안';
-      else if (/\b(mobile|ios|android|flutter|react.native)\b/.test(all)) category = '모바일';
-      else if (/\b(game|engine|unity|unreal|godot)\b/.test(all)) category = '게임';
-      else if (/\b(devops|docker|kubernetes|k8s|ci.?cd|deploy|infra|cloud)\b/.test(all)) category = 'DevOps/인프라';
-      else if (/\b(ui|component|design|css|style|theme)\b/.test(all)) category = 'UI/디자인';
-      else if (/\b(tool|util|helper|productivity)\b/.test(all)) category = '개발 도구';
-      else category = '오픈소스 프로젝트';
-
-      const lang = repo.language ? `${repo.language} 기반` : '';
-      const stars = repo.stargazers_count;
-      let popularity = '';
-      if (stars > 50000) popularity = '매우 인기 있는';
-      else if (stars > 10000) popularity = '인기 있는';
-      else if (stars > 1000) popularity = '주목받는';
-      else popularity = '떠오르는';
-
-      const descKo = translateDescription(repo.description || '');
-
-      return `[${category}] ${lang ? lang + ' ' : ''}${popularity} ${category} 프로젝트입니다. ${descKo}`;
+    function getApiKey() {
+      return localStorage.getItem(STORAGE_KEY) || '';
     }
 
-    function translateDescription(desc) {
-      if (!desc) return '설명이 제공되지 않았습니다.';
-      // Provide a meaningful Korean gloss for common English patterns
-      const replacements = [
-        [/\bA\s+/i, ''], [/\bAn\s+/i, ''],
-        [/\bfast\b/gi, '빠른'], [/\blightweight\b/gi, '경량'],
-        [/\bopen.?source\b/gi, '오픈소스'], [/\bpowerful\b/gi, '강력한'],
-        [/\bsimple\b/gi, '간단한'], [/\beasy[- ]to[- ]use\b/gi, '사용하기 쉬운'],
-        [/\bframework\b/gi, '프레임워크'], [/\blibrary\b/gi, '라이브러리'],
-        [/\btool\b/gi, '도구'], [/\bplatform\b/gi, '플랫폼'],
-        [/\bfor\b/gi, '위한'], [/\band\b/gi, '및'],
-        [/\bwith\b/gi, '+'], [/\bbased on\b/gi, '기반'],
-      ];
-      // Keep original with note
-      return `— "${desc}"`;
+    function saveApiKey() {
+      const key = document.getElementById('apiKeyInput').value.trim();
+      if (!key) return alert('API 키를 입력해주세요.');
+      localStorage.setItem(STORAGE_KEY, key);
+      document.getElementById('apiKeySection').classList.add('hidden');
+      document.getElementById('controls').style.display = 'flex';
+      searchVideos();
     }
 
-    function formatNumber(n) {
-      if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
-      return n.toString();
+    function showApiKeySection() {
+      document.getElementById('apiKeySection').classList.remove('hidden');
+      document.getElementById('apiKeyInput').value = getApiKey();
     }
 
-    function getDateStr(daysAgo) {
-      const d = new Date();
-      d.setDate(d.getDate() - daysAgo);
-      return d.toISOString().split('T')[0];
+    // On load: check for saved key
+    function init() {
+      const key = getApiKey();
+      if (key) {
+        document.getElementById('apiKeySection').classList.add('hidden');
+        document.getElementById('controls').style.display = 'flex';
+        searchVideos();
+      }
     }
 
-    function renderRepos(containerId, repos) {
-      const el = document.getElementById(containerId);
-      if (!repos.length) {
-        el.innerHTML = '<div class="error">데이터를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.</div>';
+    function formatViewCount(n) {
+      if (n >= 100000000) return (n / 100000000).toFixed(1) + '억';
+      if (n >= 10000) return (n / 10000).toFixed(1) + '만';
+      if (n >= 1000) return (n / 1000).toFixed(1) + '천';
+      return n.toLocaleString('ko-KR');
+    }
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      const now = new Date();
+      const diffMs = now - d;
+      const diffDays = Math.floor(diffMs / 86400000);
+      if (diffDays === 0) return '오늘';
+      if (diffDays === 1) return '어제';
+      if (diffDays < 7) return `${diffDays}일 전`;
+      if (diffDays < 30) return `${Math.floor(diffDays / 7)}주 전`;
+      if (diffDays < 365) return `${Math.floor(diffDays / 30)}개월 전`;
+      return `${Math.floor(diffDays / 365)}년 전`;
+    }
+
+    function parseDuration(iso) {
+      const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+      if (!m) return '';
+      const h = m[1] ? `${m[1]}:` : '';
+      const min = m[2] ? m[2].padStart(h ? 2 : 1, '0') : (h ? '00' : '0');
+      const sec = m[3] ? m[3].padStart(2, '0') : '00';
+      return `${h}${min}:${sec}`;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    async function searchVideos() {
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        document.getElementById('apiKeySection').classList.remove('hidden');
         return;
       }
-      el.innerHTML = repos.slice(0, 5).map((repo, i) => `
-        <div class="repo-card">
-          <span class="repo-rank">#${i + 1}</span>
-          <div class="repo-name">
-            <a href="${repo.html_url}" target="_blank" rel="noopener">${repo.full_name}</a>
-          </div>
-          <div class="repo-desc">${repo.description || '설명 없음'}</div>
-          <div class="repo-summary">
-            <strong>🇰🇷 한국어 요약</strong>
-            ${generateKoreanSummary(repo)}
-          </div>
-          <div class="repo-meta">
-            ${repo.language ? `<span><span class="lang-dot" style="background:${LANG_COLORS[repo.language] || '#8b949e'}"></span> ${repo.language}</span>` : ''}
-            <span class="star-icon">⭐ ${formatNumber(repo.stargazers_count)}</span>
-            <span>🍴 ${formatNumber(repo.forks_count)}</span>
-            <span>👁️ ${formatNumber(repo.watchers_count)}</span>
-            ${repo.topics && repo.topics.length ? `<span>🏷️ ${repo.topics.slice(0, 3).join(', ')}</span>` : ''}
-          </div>
-        </div>
-      `).join('');
-    }
 
-    async function fetchTrending(period) {
-      const days = period === 'weekly' ? 7 : 30;
-      const since = getDateStr(days);
-      const url = `https://api.github.com/search/repositories?q=created:>${since}&sort=stars&order=desc&per_page=5`;
+      const query = document.getElementById('searchQuery').value.trim() || '한국';
+      const category = document.getElementById('categorySelect').value;
+      const listEl = document.getElementById('videoList');
+
+      listEl.innerHTML = '<div class="loading"><div class="spinner"></div>동영상 불러오는 중...</div>';
+
       try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        return data.items || [];
+        // Step 1: Search for videos
+        let searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&order=viewCount&regionCode=KR&relevanceLanguage=ko&maxResults=30&key=${apiKey}`;
+        if (category) searchUrl += `&videoCategoryId=${category}`;
+
+        const searchRes = await fetch(searchUrl);
+        if (!searchRes.ok) {
+          const err = await searchRes.json();
+          throw new Error(err.error?.message || `HTTP ${searchRes.status}`);
+        }
+        const searchData = await searchRes.json();
+        const videoIds = searchData.items.map(item => item.id.videoId).filter(Boolean);
+
+        if (!videoIds.length) {
+          listEl.innerHTML = '<div class="error-box">검색 결과가 없습니다. 다른 검색어를 시도해보세요.</div>';
+          return;
+        }
+
+        // Step 2: Get video details (statistics, duration)
+        const detailUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=${videoIds.join(',')}&key=${apiKey}`;
+        const detailRes = await fetch(detailUrl);
+        if (!detailRes.ok) {
+          const err = await detailRes.json();
+          throw new Error(err.error?.message || `HTTP ${detailRes.status}`);
+        }
+        const detailData = await detailRes.json();
+
+        // Sort by view count descending
+        const videos = detailData.items.sort((a, b) => {
+          return parseInt(b.statistics.viewCount || 0) - parseInt(a.statistics.viewCount || 0);
+        });
+
+        renderVideos(videos);
+        document.getElementById('updatedAt').textContent =
+          `마지막 업데이트: ${new Date().toLocaleString('ko-KR')}`;
+
       } catch (e) {
-        console.error(`Error fetching ${period}:`, e);
-        return [];
+        console.error('Error:', e);
+        listEl.innerHTML = `<div class="error-box">오류 발생: ${escapeHtml(e.message)}<br><br><button class="btn btn-outline" onclick="showApiKeySection()">API 키 확인하기</button></div>`;
       }
     }
 
-    async function loadAll() {
-      const [weekly, monthly] = await Promise.all([
-        fetchTrending('weekly'),
-        fetchTrending('monthly'),
-      ]);
-      renderRepos('weekly', weekly);
-      renderRepos('monthly', monthly);
-      document.getElementById('updated-at').textContent =
-        `마지막 업데이트: ${new Date().toLocaleString('ko-KR')}`;
+    function renderVideos(videos) {
+      const listEl = document.getElementById('videoList');
+      if (!videos.length) {
+        listEl.innerHTML = '<div class="error-box">표시할 동영상이 없습니다.</div>';
+        return;
+      }
+
+      listEl.innerHTML = `<div class="video-grid">${videos.map((v, i) => {
+        const stats = v.statistics;
+        const snippet = v.snippet;
+        const thumb = snippet.thumbnails.high || snippet.thumbnails.medium || snippet.thumbnails.default;
+        const duration = parseDuration(v.contentDetails.duration);
+        const views = parseInt(stats.viewCount || 0);
+        const likes = parseInt(stats.likeCount || 0);
+        const comments = parseInt(stats.commentCount || 0);
+
+        return `
+          <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=${v.id}','_blank')">
+            <div class="thumbnail-wrap">
+              <img src="${thumb.url}" alt="${escapeHtml(snippet.title)}" loading="lazy">
+              <span class="rank-badge">#${i + 1}</span>
+              ${duration ? `<span class="duration">${duration}</span>` : ''}
+            </div>
+            <div class="video-info">
+              <div class="video-title">
+                <a href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+                  ${escapeHtml(snippet.title)}
+                </a>
+              </div>
+              <div class="channel-name">${escapeHtml(snippet.channelTitle)}</div>
+              <div class="video-stats">
+                <span>👁️ ${formatViewCount(views)}회</span>
+                <span>👍 ${formatViewCount(likes)}</span>
+                <span>💬 ${formatViewCount(comments)}</span>
+                <span>📅 ${formatDate(snippet.publishedAt)}</span>
+              </div>
+            </div>
+          </div>`;
+      }).join('')}</div>`;
     }
 
-    function refreshAll() {
-      document.getElementById('weekly').innerHTML =
-        '<div class="loading"><div class="spinner"></div>주간 트렌딩 불러오는 중...</div>';
-      document.getElementById('monthly').innerHTML =
-        '<div class="loading"><div class="spinner"></div>월간 트렌딩 불러오는 중...</div>';
-      loadAll();
-    }
-
-    // Tab switching
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(tab.dataset.tab).classList.add('active');
-      });
+    // Enter key support for search & API key
+    document.getElementById('searchQuery').addEventListener('keydown', e => {
+      if (e.key === 'Enter') searchVideos();
+    });
+    document.getElementById('apiKeyInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') saveApiKey();
     });
 
-    loadAll();
+    init();
   </script>
 </body>
 </html>
